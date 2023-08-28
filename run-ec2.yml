@@ -1,0 +1,32 @@
+---
+- name: Create EC2 Instance
+  hosts: localhost
+  gather_facts: False
+  vars:
+    region: "us-east-1"
+    instance_type: "t2.micro"
+    ami_id: "ami-051f7e7f6c2f40dc1"
+    keypair: "ec2key"
+    security_group: "launch-wizard-1"
+    subnet_id: "subnet-055597f69e1a9e37a"
+    instance_tags:
+      Name: "Ansible-instance"
+  tasks:
+    - name: Create EC2 Instance
+      ec2:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        region: "{{ region }}"
+        instance_type: "{{ instance_type }}"
+        image: "{{ ami_id }}"
+        key_name: "{{ keypair }}"
+        security_groups: "{{ security_group }}"
+        subnet_id: "{{ subnet_id }}"
+        assign_public_ip: yes
+        count: 1
+        instance_tags: "{{ instance_tags }}"
+      register: ec2_instance
+
+    - name: Print EC2 Instance Details
+      debug:
+        var: ec2_instance.instances
